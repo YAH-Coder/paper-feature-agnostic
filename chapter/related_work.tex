@@ -1,0 +1,23 @@
+\section{Related work}
+What exists already
+
+- ExtractorPL (Ziadi et al 2014)
+  - Language-independent model (FSTs) for reverse-engineering SPL from variants
+  - Needs language-specific parsers / pretty printers
+  - Produces full SPL implementation and regenerates original products 
+  
+- FeatureHouse / CIDE / language-independent reference checking
+  - Language-independent abstractions over multiple languages
+  - Still depend on per-language front-ends
+[1]: https://www.se.cs.uni-saarland.de/publications/docs/SC2009mod.pdf "Language-Independent Quantification and Weaving for Feature Composition"
+[2]: https://www.se.cs.uni-saarland.de/publications/docs/TR-0208.pdf "Language-Independent Safe Decomposition of Legacy "
+
+- Variability mining / feature location
+  - Variability Mining (Kästner et al), LEADT: AST + type system + topology + text 
+  - Wille, VarMine, etc: combine structural and text-based techniques, sometimes domain-specific 
+[3]: https://www.sciencedirect.com/science/article/pii/S0167642318301382 "Improving custom-tailored variability mining using outlier "
+
+- Clone-based and text-based analyses
+  - Token-based clone detectors (CCFinder, SourcererCC) widely used; sometimes integrated into SPL migration
+[4]: https://www.uni-bremen.de/fileadmin/user_upload/fachbereiche/fb3/softtech/Abschlussarbeiten/Diplomarbeiten/Inkrementelle_Klonerkennung.pdf "Incremental Clone Detection"
+

@@ -1,5 +1,33 @@
 \section{Abstract}
-- solution for software product line reengineering using a feature and language agnostic approach
-- full circle approach, meaning feature isolation/feature mining enabling full regeneration of the original or new variants
-- performance optimized thanks to differentiation of similarity levels
-- 
+Context / Problem
+
+- Current software product line (SPL) reengineering methods often depend on:
+    - Programming language–specific parsing/analysis
+    -High manual effort in feature extraction and isolation
+
+Need: a language-agnostic, automated approach for feature isolation/mining
+Goal: enable full-circle reengineering; i.e., extract features and regenerate original or new product variants.
+
+Approach / Method
+- Feature & language agnostic via token-based processing:
+    - Works purely on token level -> independent of syntax or language grammar
+    - Tokenization: split on character class boundaries (letters, digits, symbols)
+
+Similarity analysis pipeline:
+File-level similarity -> identical files treated as single variant
+Line-level comparison —> identify matching/nonmatching lines
+Token-level alignment using Longest Common Subsequence (LCS) to isolate fine-grained feature fragments
+
+Performance optimization:
+
+Differentiated similarity levels -> skip redundant or identical comparisons -> reduces time complexity
+
+Contributions
+- Prototype method and tooling for SPL feature isolation/mining.
+- kEnables regeneration of original or new product variants (full-circle)
+- Language independence reduces reengineering effort
+- Target audience: researchers and tool developers exploring automated SPL reengineering
+- Evaluation: tested on a small, intricate custom SPL as proof of concept and argoUML
+- Future work: empirical validation
+
+Software product line (SPL) reengineering frequently depends on language-specific analyses and significant manual effort to isolate, relate, and reconstruct features across variants. This paper introduces a feature- and language-agnostic method for SPL feature isolation and mining that enables full-circle reengineering, i.e. regeneration of original and newly composed variants. The approach operates exclusively at the token level via character-class–based tokenization and a stratified similarity pipeline. Identical files are first collapsed at the file level, residual differences are analyzed at the line level, remaining unmatched material is then aligned at the token level using a Longest Common Subsequence (LCS) procedure to yield fine-grained feature fragments. Performance is improved through similarity-level differentiation, which prunes redundant comparisons and controls analysis granularity. A prototype implementation demonstrates feasibility on (i) a deliberately intricate, constructed SPL and (ii) the ArgoUML Benchmark, illustrating language independence and end-to-end regeneration capability. The method is intended to lower the manual effort typically associated with SPL reengineering while avoiding dependence on language-specific tooling. We discuss implications for automated feature extraction and outline directions for empirical evaluation and tool maturation.
