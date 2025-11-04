@@ -21,3 +21,27 @@ What exists already
   - Token-based clone detectors (CCFinder, SourcererCC) widely used; sometimes integrated into SPL migration
 [4]: https://www.uni-bremen.de/fileadmin/user_upload/fachbereiche/fb3/softtech/Abschlussarbeiten/Diplomarbeiten/Inkrementelle_Klonerkennung.pdf "Incremental Clone Detection"
 
+AST/Parser-Based Methods:
+	- TypeChef — variability-aware C parser building a unified (variational) AST for all #ifdef variants — 2011 — Christian Kästner et al.: Variability-Aware Parsing in the Presence of Lexical Macros and Conditional Compilation
+	- Variability-aware Lexer (Partial Preprocessor) — reads unpreprocessed code with #ifdef, resolves macros/file-includes, emits a conditional token stream for AST construction — 2011 — Christian Kästner et al.: Partial Preprocessing C Code for Variability Analysis
+
+Preprocessor-Based Methods:
+	- CIDE+ (Color-Coded IDE) — semi-automated annotation and extraction of optional feature code fragments using color-coded #ifdef blocks in IDE — 2011 — Christian Kästner et al.: CIDE+: A Semi-Automatic Approach for Product Line Extraction
+
+FST-Based Methods:
+	- FeatureHouse — language-independent composition using Feature Structure Trees (FSTs) to superimpose artifacts across languages — 2013 — Sven Apel, Christian Kästner, Christian Lengauer: Language-Independent and Automated Software Composition: The FEATUREHOUSE Experience
+
+Formal Concept Analysis / Data Mining:
+	- Formal Concept Analysis (FCA) — derives feature commonalities and variability by building a concept lattice over configurations — 2025 — Jessie Galasso: Formal Concept Analysis: a Structural Framework for Variability Extraction and Analysis
+
+Clone Detection / Similarity-Based Methods:
+	- CCFinder2 — detects duplicated code fragments in feature-oriented SPLs to identify common and feature-specific clones — 2010 — Sandro Schulze et al.: Code Clones in Feature-Oriented Software Product Lines
+
+Software Transplantation / Program Slicing:
+	- µTrans / Scalpel — automated transplantation of a feature’s code (organ) from one system to another using program slicing and genetic search — 2015 — Earl Barr et al.: Automated Software Transplantation
+	- FOUNDRY / ProdScalpel — automated SPL reengineering via transplantation extracting feature code slices (over-organs) and integrating them into a base system — 2023 — Leandro O. Souza et al.: Software Product Line Engineering via Software Transplantation
+
+Tool-Assisted / Semi-Automated Workflows:
+	- BUT4Reuse — bottom-up framework using FCA and mining to identify commonalities, variability, and synthesize feature models semi-automatically — 2016 — Fegelein et al.: Bottom-Up Technologies for Reuse (BUT4Reuse)
+	- ExtractorPL — extractive SPL reverse engineering from variants using FSTs and grouping of construction primitives into features enabling regeneration of original products — 2014 — Tewfik Ziadi et al.: ExtractorPL: Language-Independent Extractive Software Product Line Engineering
+	- Wille et al. — model-based delta module generation from clone-and-own code variants enabling automated regeneration — 2017 — Dominik Wille et al.: Extractive Software Product Line Engineering using Model-Based Delta Module Generation
