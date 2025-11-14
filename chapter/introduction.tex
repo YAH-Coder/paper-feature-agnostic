@@ -1,53 +1,30 @@
+% Back the general claim about product families and clone-and-own with standard SPL references and with a clone-and-own reference
 \section{Introduction}
+Organizations increasingly deliver families of related products rather than single monolithic systems. A common pragmatic strategy is clone-and-own: copy an existing product and adapt it to new requirements. In practice, such variant portfolios are often polyglot: they span multiple programming languages and a variety of non-code textual artefacts, including configuration files, build scripts, domain-specific languages (DSLs), and resource texts. Over time, the accumulation of customer-specific adaptations causes variants to diverge, while the relationships among variants remain implicit.
 
-- Question: How can we automatically extract features that can be engineered into a software product line from a set of given clone-and-own variants? Is it possible to do this without using any special constructs, like AST or FST, or any special knowledge about the language we input?
+% Cite empirical work on clone-and-own maintenance issues here,
+The resulting maintenance burden is considerable. First, propagating bug fixes and feature changes across multiple forks is labour-intensive and error-prone. Second, traceability degrades: it becomes difficult to determine which variant contains which feature or fix. Third, divergence increases cost and risk when onboarding new customers or composing new configurations from existing assets. These issues are a common motivation for moving from ad hoc clone-and-own development to software product line (SPL) engineering, where reusable assets and variability are managed explicitly~\cite{clements2001software,pohl2018software}.
 
-Context:
-	- polyglot codebases with multiple implementation languages
-	- inclusion of domain-specific languages (DSLs)
-	- inclusion of textual requirements or configuration artifacts
-	- organizations evolving systems via clone-and-own across these heterogeneous artifacts
+% need to tie this paragraph explicitly to concrete techniques in the related work section:
+% ExtractorPL, FeatureHouse, TypeChef, CIDE, BUT4Reuse, variability mining, etc.
+SPL reengineering and variability mining aim to recover reusable assets and variability models from existing variants. Many established techniques rely on language-specific parsers, abstract syntax trees, or feature structure trees for each programming language and artefact type they analyse, often complemented by type-system reasoning or model transformations. These approaches have shown strong results in settings where suitable front-ends are available, but they are costly to deploy in polyglot, DSL-rich environments: front-ends may not exist for in-house DSLs or bespoke configuration formats, and maintaining multiple parsers and pretty printers requires substantial effort. This creates a gap between the heterogeneous artefacts found in industrial portfolios and the assumptions of parser-dependent reengineering pipelines.
 
-Pain points:
-	- high cost of maintaining multiple cloned forks over time
-	- bug propagation across variants difficult to track and fix consistently
-	- inconsistencies between implementations, DSL artifacts, and requirements
-	- onboarding new variants or customers requires manual copy-and-adapt work
+We address the following question: how can one extract a reusable, generative representation from sets of related variants in a way that is programming-language independent and applicable to heterogeneous textual artefacts, while still supporting regeneration of the original variants? Our answer is a parser-free, token-based approach that treats all artefacts uniformly as text and does not assume predefined feature names or models, making the analysis \emph{feature-agnostic} in scope.
 
-Limitations of existing approaches:
-	- depend on language-specific parsers or frontends for each programming language
-	- need adaptation or engineering effort for every new language or DSL
-	- hard to apply to weird or proprietary DSLs without tool support
-	- limited support for truly polyglot systems with mixed artifacts
-	- often focus on a single language ecosystem rather than arbitrary text-based artifacts
+The method performs a stratified similarity analysis. Identical files are collapsed at the file level, matching and non-matching material is identified at the line level, and residual differences are aligned at the token level using a Longest Common Subsequence procedure. The resulting common and variant-specific blocks together constitute a recovered SPL representation from which the original variants can be regenerated. The reasoning is programming-language independent because the pipeline only requires a lightweight tokenizer for each artefact family, rather than full parsers or grammars.
 
-input:
-	- accepts any text-based artifact as input
-	- operates on multiple cloned codebases as product variants
-	- treats source code, DSLs, and textual requirements uniformly at token level
-	- no need for language-specific parsers or grammar definitions
+We ground the work in an industrially motivated scenario: a vendor of control systems maintains between five and twenty customer-specific variants as full project directories created via clone-and-own. Our prototype focuses on such small-to-medium portfolios and assumes aligned relative paths across variants; regenerated products aim at textual equivalence to the originals. Within this scope, we report a feasibility study and a first partial empirical evaluation on a deliberately constructed SPL and on the ArgoUML benchmark, assessing regeneration fidelity and practical performance.
 
-output:
-	- one artifact per extracted feature capturing all associated code and text blocks
-	- explicit separation of common blocks shared across variants
-	- explicit separation of unique blocks specific to individual variants
-	- a template representation of the reconstructed software product line
-	- a configuration description for each variant
-	- generator that uses template plus per-variant configuration to regenerate all original variants
-	- possibility to define new configurations for new variants
+% Contributions:
+\paragraph*{Contributions.}
+This paper makes the following contributions:
+\begin{itemize}
+  \item A lightweight, programming-language independent pipeline for extracting common and variant-specific blocks from polyglot variant sets using parser-free, token-based similarity analysis.
+  \item A feature-agnostic prototype implementation that recovers a generative representation and regenerates the original variants from it.
+  \item A feasibility study and first partial empirical evaluation on a synthetic SPL and the ArgoUML benchmark, demonstrating end-to-end regeneration and discussing assumptions and limitations of the approach.
+\end{itemize}
 
-key properties:
-	- parser-free, token-based processing
-	- language-agnostic by construction
-	- suitable for polyglot systems and arbitrary DSLs
-	- multi-level similarity (file, line, token) as core mechanism
-	- focuses on automation with minimal manual intervention
-
-Evaluation plan:
-	- feasibility study rather than full empirical evaluation
-	- demonstration on a deliberately intricate synthetic SPL
-	- demonstration on a real-world benchmark SPL (e.g. ArgoUML)
-	- qualitative assessment of correctness and practicality
-
-Software is an ever increasing part of our society and business. Every day thousands of new lines of software are written. With more and more softare beeing needed a lot of software development companies employ techniques like clone-and-own. These allow for the quick creation of ever more new variants of the same software system. With the existens of more variants it becomes increasingly hard to maintain these different variants, e.g. if a bug is found in one in these variants, it is hard to track down if the code having this bug is present in other variants of the same system. Thats were software product line reengineering comes into play. It allows us to extract, so called feature mining, code blocks from exisiting variants and thus reduce time needed for things like maintaining the system. It also greatly reduces the time needed for creating new variants for new or existing customers or updating existing variants with new features.
-There have been a lot of developments in the area of feature mining, feature extraction or also called variability mining. A lot of approaches have been presented.
+% Paper structure:
+% NOTE: Replace the section labels with the actual ones
+\paragraph*{Paper structure.}
+Section~\ref{sec:background} introduces background and formalizes the problem setting. Section~\ref{sec:approach} presents the extraction approach. Section~\ref{sec:implementation} describes the prototype. Section~\ref{sec:evaluation} reports the evaluation. Section~\ref{sec:discussion} discusses implications and limitations. Section~\ref{sec:related} reviews related work, and Section~\ref{sec:conclusion} concludes with directions for future research.

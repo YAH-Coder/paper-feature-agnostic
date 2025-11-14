@@ -1,33 +1,15 @@
-\section{Abstract}
-Context / Problem
-
-- Current software product line (SPL) reengineering methods often depend on:
-    - Programming language–specific parsing/analysis
-    -High manual effort in feature extraction and isolation
-
-Need: a language-agnostic, automated approach for feature isolation/mining
-Goal: enable full-circle reengineering; i.e., extract features and regenerate original or new product variants.
-
-Approach / Method
-- Feature & language agnostic via token-based processing:
-    - Works purely on token level -> independent of syntax or language grammar
-    - Tokenization: split on character class boundaries (letters, digits, symbols)
-
-Similarity analysis pipeline:
-File-level similarity -> identical files treated as single variant
-Line-level comparison —> identify matching/nonmatching lines
-Token-level alignment using Longest Common Subsequence (LCS) to isolate fine-grained feature fragments
-
-Performance optimization:
-
-Differentiated similarity levels -> skip redundant or identical comparisons -> reduces time complexity
-
-Contributions
-- Prototype method and tooling for SPL feature isolation/mining.
-- kEnables regeneration of original or new product variants (full-circle)
-- Language independence reduces reengineering effort
-- Target audience: researchers and tool developers exploring automated SPL reengineering
-- Evaluation: tested on a small, intricate custom SPL as proof of concept and argoUML
-- Future work: empirical validation
-
-Software product line (SPL) reengineering frequently depends on language-specific analyses and significant manual effort to isolate, relate, and reconstruct features across variants. This paper introduces a feature- and language-agnostic method for SPL feature isolation and mining that enables full-circle reengineering, i.e. regeneration of original and newly composed variants. The approach operates exclusively at the token level via character-class–based tokenization and a stratified similarity pipeline. Identical files are first collapsed at the file level, residual differences are analyzed at the line level, remaining unmatched material is then aligned at the token level using a Longest Common Subsequence (LCS) procedure to yield fine-grained feature fragments. Performance is improved through similarity-level differentiation, which prunes redundant comparisons and controls analysis granularity. A prototype implementation demonstrates feasibility on (i) a deliberately intricate, constructed SPL and (ii) the ArgoUML Benchmark, illustrating language independence and end-to-end regeneration capability. The method is intended to lower the manual effort typically associated with SPL reengineering while avoiding dependence on language-specific tooling. We discuss implications for automated feature extraction and outline directions for empirical evaluation and tool maturation.
+\begin{abstract}
+% context: SPL reengineering -> language-specific parsers; high manual effort
+% need: language-independent analysis; feature-agnostic scope
+% goal: full-circle reengineering; extract features; regenerate variants
+% approach: token-based; character-class tokenization; stratified similarity (file/line/token)
+% alignment: LCS at token level; isolate fine-grained blocks
+% performance: pruning identical files; level-wise comparison; reduced comparisons
+% artifacts: polyglot code; configs; build scripts; DSLs; textual resources
+% evaluation: synthetic SPL; ArgoUML benchmark
+% contributions: pipeline; prototype; regeneration capability; reduced reengineering effort
+% limitations: assumes aligned paths; no rename/move tracking; textual—not semantic—equivalence
+% audience: researchers; tool builders; SPL reengineering
+% future: empirical validation; scaling; feature grouping and modeling
+Reengineering software product lines (SPLs) from clone-and-own portfolios often relies on language-specific tooling and substantial manual effort to isolate, relate, and reconstruct features across variants. This paper presents a \emph{programming-language independent} and \emph{feature-agnostic} method that supports full-circle reengineering by recovering a unified representation from multiple variants and regenerating the originals from it. The approach treats all artefacts uniformly as text, covering polyglot source code, configuration files, build scripts, domain-specific languages, and other textual resources. Artefacts are tokenized along character-class boundaries and processed by a stratified similarity pipeline that collapses identical files, identifies matching and non-matching lines, and applies token-level alignment via the Longest Common Subsequence to obtain fine-grained blocks characteristic of commonalities and differences. Similarity-level pruning reduces redundant comparisons and keeps the analysis tractable for small to medium-sized variant sets. A prototype implementation demonstrates feasibility in a non-trivial synthetic SPL and the ArgoUML benchmark, showing that the recovered representation is precise enough to regenerate variants while avoiding dependence on parsers, abstract syntax trees, or pretty printers. The work contributes a parser-free extraction pipeline, a proof-of-concept tool, and initial empirical evidence that programming-language independent text processing can support SPL reengineering across heterogeneous artefacts. We spell out current assumptions (aligned paths, text-level equivalence) and outline future steps, including validation on SPLs from industrial practice and extensions towards additional resources such as string tables, help files, and other non-code artefacts.
+\end{abstract}

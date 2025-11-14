@@ -1,91 +1,224 @@
 \section{Background and Problem Setting}
+\label{sec:background}
 
-Definitions:
-Software product line (SPL):
-	- definition: set of software-intensive systems that share a common, managed set of features for a market segment or mission and are developed from a common set of core assets in a prescribed way
-	- canonical book: Paul C. Clements, Linda M. Northrop, “Software Product Lines: Practices and Patterns”, Addison-Wesley, 2001
-	- paper/chapter repeating the definition: Klaus Pohl, Andreas Metzger, “Software Product Lines”, in: V. Gruhn, R. Striemer (eds.), The Essence of Software Engineering, Springer, 2018
+\subsection{Basic Concepts}
 
-Feature:
-	- definition: system property that is relevant to some stakeholder and is used to capture commonalities or discriminate among systems in a family
-	- canonical book: Krzysztof Czarnecki, Ulrich W. Eisenecker, “Generative Programming: Methods, Tools, and Applications”, Addison-Wesley, 2000
-	- paper stating the definition explicitly: Krzysztof Czarnecki, Simon Helsen, Ulrich W. Eisenecker, “Formalizing Cardinality-Based Feature Models and their Specialization”, Software Process: Improvement and Practice, 10(1):7–29, 2005
+We adopt the standard understanding of a software product line (SPL) as
+a \emph{set of software-intensive systems that share a common, managed
+set of features for a particular market segment or mission and that are
+developed from a common set of core assets in a prescribed way}, as
+formulated by Clements and Northrop in their seminal work on SPL
+engineering~\cite{clements2001software}. This view has been reiterated
+and refined in subsequent overviews of SPL practice and
+research~\cite{pohl2018software}. The emphasis on a managed portfolio of
+systems and on systematic reuse of core assets distinguishes SPL
+engineering from ad hoc reuse strategies.
 
-Variant:
-	- working definition: one concrete product of the product line, i.e., one program that realizes a specific combination of features
-	- paper emphasizing SPL as a set of program variants: Thomas Thüm, Christian Kästner, Sebastian Erdweg, Norbert Siegmund, “Abstract Features in Feature Modeling”, Proceedings of the International Software Product Line Conference (SPLC), 2011
-	- paper explicitly talking about variants as members distinguished by their features: Lukas Linsbauer, Paul Grünbacher, Thomas Berger, “Variability Extraction and Modeling for Product Variants”, Software & Systems Modeling, 16(1):117–142, 2017
+Within this context, a \emph{feature} denotes a system property that is
+relevant to some stakeholder and is used to capture commonalities or to
+discriminate among systems in a family. This notion of features as
+stakeholder-relevant units of functionality or quality attributes is
+well established in the generative programming and SPL
+literature~\cite{czarnecki2000generative,czarnecki2005formalizing}. It
+provides a unifying abstraction across heterogeneous artifacts and
+implementation techniques: a single feature may have manifestations in
+source code, configuration files, build scripts, or domain-specific
+languages.
 
-Clone-and-own:
-	- definition: manual, ad hoc software reuse practice where new product variants are created by copying (cloning) existing variants and modifying them
-	- paper with a precise definition: Lukas Linsbauer, Paul Grünbacher, Thomas Berger, “Variability Extraction and Modeling for Product Variants”, Software & Systems Modeling, 16(1):117–142, 2017
-	- paper on industrial migration away from clone-and-own: Elias Kuiter, Jacob Krüger, Sebastian Krieter, Thomas Leich, Gunter Saake, “Getting Rid of Clone-and-Own: Moving to a Software Product Line for Temperature Monitoring”, Proceedings of SPLC, 2018
-	- paper on tool support for clone-and-own reuse: Stefan Fischer, Johannes Oberleitner, Paul Grünbacher, Thomas Grechenig, “Enhancing Clone-and-Own with Systematic Reuse for Developing Software Variants”, Proceedings of ICSME, 2014
+A \emph{variant} (or product) is one concrete member of the SPL, i.e.,
+one program that realizes a particular combination of
+features~\cite{thum2011abstract,linsbauer2017variability}. From this
+perspective, an SPL can be understood as a set of related program
+variants, together with a feature space and a (possibly partial) mapping
+from feature selections to variants. Variability extraction and
+reengineering techniques aim at recovering such a mapping and the
+underlying reusable assets from existing variant sets.
 
-Scenario:
-	- domain: industrial control system
-	- vendor delivers customized control systems to multiple customers
-	- new customer solutions created via clone-and-own from an existing system
-	- over time 5–20 variants evolve for different customers
-	- each variant is a full project directory containing code and related artifacts
-	- maintenance and evolution become increasingly costly as the number of variants grows
+\subsection{Clone-and-Own in Industrial Practice}
 
-Polyglot context and artifacts:
-	- implementation languages of interest: Java and C++
-	- potential additional artifacts: configuration files, build scripts, textual requirements, domain-specific languages (future work)
-	- all artifacts are treated uniformly as text by the approach
-	- polyglot nature and ad hoc DSLs make language-specific tooling difficult to apply
-	- structure may exist in artifacts but is not exploited by the extraction method
+A widely observed practice for developing and maintaining product
+variants in industry is \emph{clone-and-own}. In clone-and-own, new
+variants are created by copying (cloning) an existing system and then
+modifying the copy to satisfy the requirements of a particular customer
+or use case. Linsbauer et al.\ provide a precise characterization of
+this practice in the context of variability extraction and modeling for
+product variants~\cite{linsbauer2017variability}. While clone-and-own
+offers an attractive, low-barrier reuse mechanism, it lacks the
+disciplined variability management and systematic reuse of SPL
+engineering.
 
-Problem statement:
-	- industrial control system maintained via clone-and-own across multiple customers
-	- variants diverge over time through customer-specific changes and bug fixes
-	- high cost of maintaining multiple forks
-	- difficult to track which variants contain which bug fixes or feature implementations
-	- hard to propagate a bug fix or feature to all relevant variants consistently
-	- existing SPL reengineering approaches struggle with polyglot and DSL-heavy settings due to parser and tooling dependencies
-	- goal: automatically extract a structured SPL representation from existing variants without language-specific tooling and enable regeneration of all original variants
+The consequences of clone-and-own for long-term maintenance and
+evolution have been documented in several empirical and industrial
+reports. For example, Kuiter et al.\ describe the migration of a
+temperature monitoring system from clone-and-own development to an SPL
+and report on the maintenance burdens associated with the original
+clone-and-own portfolio~\cite{kuiter2018getting}. Fischer et al.\ propose
+tool support to enhance clone-and-own with more systematic reuse, again
+motivated by the challenges of managing diverging clones over
+time~\cite{fischer2014enhancing}. Commonly cited problems include
+redundant bug fixing across multiple forks, inconsistent propagation of
+changes, and the absence of an explicit variability model.
 
-Input model:
-	- input is a finite set of product variants
-	- each variant is modeled as a project directory tree
-	- variant contents: source code files, DSL files, textual requirements, build scripts, other text-based artifacts
-	- each file represented as a path plus textual content
-	- current assumption: file names and directory structure are aligned across variants
-	- no support yet for renamed or moved files between variants
-	- intended scale: from a handful up to around a dozen or more variants, with runtime increasing as variants and files grow
+In the scenario that motivates this work, the domain is an industrial
+control system. A vendor delivers customized control systems to multiple
+customers. New customer solutions are routinely created via clone-and-own
+from an existing system. Over time, between roughly five and twenty
+variants evolve for different customers. Each variant is organized as a
+full project directory, comprising code and related artifacts. As the
+number of variants and the extent of customer-specific changes grow,
+maintenance and evolution become increasingly costly: engineers must
+manually identify and propagate relevant changes across variants, and
+the relationships between variants are only implicitly encoded in the
+clone history.
 
-Output model:
-	- extracted representation of the software product line from the given variants
-	- separation of common blocks (present in multiple variants) and unique blocks (specific to subsets of variants)
-	- feature artifacts: current prototype produces blocks__S1-2-3-...-n.tsv style files indicating which systems share which blocks
-	- target vision: one logical artifact per feature capturing all associated blocks across files and languages
-	- template: representation of the reconstructed SPL serving as the generative base
-	- per-variant configuration: list of selected features for each variant
-	- generator input: template, mapping between system names and file names, per-variant configurations
-	- generator output: regenerated variants that textually match the original inputs (modulo known limitations)
-	- future work: richer representation for multi-file input that encodes directory structure and file-level grouping
+\subsection{Polyglot Variant Portfolios and Artifacts}
 
-Assumptions and constraints:
-	- all variants originate from a common ancestor via clone-and-own
-	- variants may initially even be identical before divergence
-	- artifacts are treated as ordinary text, including build files and DSLs
-	- no reliance on language-specific parsers, grammars, or meta-models
-	- no guarantee of semantic or behavioral equivalence beyond textual reconstruction
-	- no inference of feature names or a feature model at this stage
-	- focus is on code and text isolation and regeneration, not on behavioral analysis or verification
+The variants in our setting are \emph{polyglot}. The primary
+implementation languages of interest are Java and C++, but the systems
+also involve additional artifacts such as configuration files, build
+scripts, textual requirements, and potentially dedicated
+domain-specific languages (DSLs). In principle, each of these artifact
+types may carry variability information and feature implementations.
 
-Solution requirements:
-	- language-agnostic processing that does not depend on per-language frontends
-	- support for arbitrary text-based artifacts (code, DSLs, configs, requirements)
-	- ability to recover enough structure to regenerate all original variants from a single SPL representation
-	- minimal manual effort, primarily fully automatic processing
-	- acceptable runtime for small to medium-sized variant sets in the industrial control system context
-	- robustness to moderate differences in formatting and layout
+In practice, the polyglot nature of such portfolios poses a challenge
+for SPL reengineering. While structure may exist in many artifacts
+(e.g., syntactic structure in source code or DSLs, schema-constrained
+configuration formats), exploiting this structure typically requires
+language-specific parsers, grammars, or meta-models. For in-house DSLs
+and ad hoc configuration formats, such tooling may be unavailable, only
+partially implemented, or costly to maintain. One of the core design
+decisions of the present work is therefore to treat all artifacts
+uniformly as text. Our extraction method deliberately refrains from
+using language-specific structure and instead operates on a generic,
+token-based representation that can be applied to arbitrary text-based
+artifacts.
 
-Optional intuitive example (for later sections):
-	- consider two variants of a component with combined features recursive checking and logging vs iterative checking
-	- checking appears in both variants and is isolated as common code (feature1)
-	- recursive and logging remain as unique blocks associated with the first variant (feature2 = file1 minus feature1)
-	- iterative remains as a unique block associated with the second variant and coincides with a clean, isolated feature implementation
-	- illustrates how the miner isolates common and unique blocks without language-specific knowledge
+\subsection{Problem Statement}
+
+We consider an industrial control system that is maintained via
+clone-and-own across multiple customers. Starting from a common ancestor
+system, customer-specific changes and bug fixes are applied separately
+to each cloned variant. Over time, the variants diverge. This leads to
+several interrelated problems. First, the cost of maintaining multiple
+forks grows, as the same defect may need to be fixed independently in
+many variants. Second, it becomes difficult to track which variants
+contain which bug fixes or feature implementations. Third, propagating a
+new bug fix or feature to all relevant variants consistently is hard,
+especially when changes interact or when customer-specific constraints
+must be respected.
+
+Existing SPL reengineering approaches aim to address such problems by
+deriving reusable assets and variability models from existing variants.
+However, many of these approaches rely on language-specific parsers,
+abstract syntax trees, or feature structure trees for each programming
+language and artifact type they analyze. In polyglot and DSL-heavy
+settings, this dependence on language-specific tooling is problematic:
+tools must be developed or adapted for each language and DSL, and the
+reengineering process breaks down when adequate frontends are not
+available. This motivates the following goal: to automatically extract a
+structured SPL representation from existing variants without relying on
+language-specific tooling and to enable the regeneration of all original
+variants from this representation.
+
+\subsection{Input Model}
+
+The input to our approach is a finite set of product variants. Each
+variant is modeled as a project directory tree whose contents comprise
+source code files, DSL files, textual requirements, build scripts, and
+other text-based artifacts. At the granularity relevant for our method,
+each file is represented by its path within the directory tree and its
+textual content.
+
+The current prototype assumes that file names and directory structure
+are aligned across variants, i.e., corresponding files share the same
+relative path. Under this assumption, there is no built-in support for
+tracking renamed or moved files between variants; such evolution is
+treated as deletion and addition of files. The intended scale of
+application ranges from a handful up to roughly a dozen or slightly more
+variants. Runtime and memory consumption increase with the number of
+variants and the size and number of files but are expected to remain
+acceptable for small to medium-sized portfolios in the industrial
+control system context.
+
+\subsection{Output Model}
+
+The output of the extraction process is a representation of the software
+product line that is inferred from the given variants. Conceptually,
+this representation separates \emph{common blocks}, which are present in
+multiple variants, from \emph{unique blocks}, which are specific to
+subsets of variants. In the current prototype, these blocks are recorded
+in files of the form \texttt{blocks\_\_S1-2-3-...-n.tsv}, which indicate
+which systems (variants) share which blocks.
+
+The target vision extends this representation towards one logical
+artifact per feature, capturing all associated blocks across files and
+languages. Together, these feature artifacts form a \emph{template} for
+the reconstructed SPL, which serves as a generative base. For each
+variant, a per-variant configuration specifies the set of features (or
+blocks) selected for that variant. A generator then takes the template,
+the mapping between system names and file names, and the per-variant
+configurations as input and produces regenerated variants as output.
+Ideally, these regenerated variants textually match the original inputs
+(modulo known limitations, such as handling of renamed files or
+non-deterministic ordering of independent blocks). Future work targets a
+richer representation for multi-file inputs that more explicitly encodes
+directory structure and file-level grouping.
+
+\subsection{Assumptions and Constraints}
+
+Our approach rests on several assumptions and constraints. We assume
+that all variants originate from a common ancestor via clone-and-own and
+that divergence has occurred through subsequent, mostly localized
+changes. Artifacts of interest are treated as ordinary text, including
+source code, DSLs, build files, and configuration files. The method does
+not rely on language-specific parsers, grammars, or meta-models and
+deliberately abstains from exploiting syntactic or semantic structure
+beyond what is visible at the token level.
+
+The extraction and regeneration operate at the level of textual blocks.
+Consequently, there is no guarantee of semantic or behavioral
+equivalence beyond textual reconstruction: regenerated variants are
+intended to reproduce the original text, but no additional behavioral
+analysis or verification is performed. Likewise, the current stage of
+the work does not infer feature names or an explicit feature model.
+Instead, it focuses on isolating and grouping code and text fragments
+that vary across variants and on enabling their regeneration.
+
+\subsection{Solution Requirements}
+
+Given this setting, we derive a set of requirements for a suitable SPL
+reengineering solution. First, processing must be \emph{language
+agnostic} and must not depend on per-language frontends, so that the
+approach can be applied uniformly to arbitrary text-based artifacts,
+including in-house DSLs and semi-structured configuration files. Second,
+the approach should support \emph{arbitrary text-based artifacts},
+including code, DSLs, configuration files, and requirements documents,
+without making strong assumptions about their structure.
+
+Third, the method must recover enough structure to regenerate all
+original variants from a single SPL representation, thus enabling
+full-circle reengineering. Fourth, the process should require only
+minimal manual effort and be primarily fully automatic, relying on
+default settings rather than extensive user guidance. Fifth, runtime
+must be acceptable for small to medium-sized variant sets of the size
+observed in the industrial control system context. Finally, the approach
+should be reasonably robust to moderate differences in formatting and
+layout, such as whitespace or comment changes, so that irrelevant
+syntactic variation does not dominate the analysis.
+
+\subsection{Intuitive Example}
+
+To provide an intuition for the kind of variability that our miner aims
+to capture, consider two variants of a component that support different
+combinations of features. In one variant, a check is implemented
+recursively and augmented with logging, whereas in the other variant the
+same check is implemented iteratively without logging. At a textual
+level, parts of the checking logic appear in both variants, while the
+recursive implementation and the logging code are specific to the first
+variant and the iterative implementation is specific to the second. A
+token-based similarity analysis can isolate the shared checking logic as
+a common block, while treating the recursive, logging, and iterative
+parts as unique blocks associated with the respective variants. This
+illustrates how common and unique blocks can be identified without
+language-specific knowledge and how they can serve as building blocks
+for an extracted SPL representation.

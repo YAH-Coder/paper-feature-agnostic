@@ -1,47 +1,35 @@
-\section{Related work}
-What exists already
+%NOTE: Eisi marked the earlier related-work sketch as "sehr gut", so I keep the structure
+%TODO: should double-check that each cited reference really matches the described technique
+%
+\section{Related Work}
+Research on extractive software product lines (SPLs) and variant management spans parser- and model-based reengineering, variability mining, clone-based analyses, and software transplantation. We group the most relevant strands and position our contribution accordingly.
 
-- ExtractorPL (Ziadi et al 2014)
-  - Language-independent model (FSTs) for reverse-engineering SPL from variants
-  - Needs language-specific parsers / pretty printers
-  - Produces full SPL implementation and regenerates original products 
-  
-- FeatureHouse / CIDE / language-independent reference checking
-  - Language-independent abstractions over multiple languages
-  - Still depend on per-language front-ends
-[1]: https://www.se.cs.uni-saarland.de/publications/docs/SC2009mod.pdf "Language-Independent Quantification and Weaving for Feature Composition"
-[2]: https://www.se.cs.uni-saarland.de/publications/docs/TR-0208.pdf "Language-Independent Safe Decomposition of Legacy "
+% NOTE: Verify that the summary of ExtractorPL and FeatureHouse matches the original papers.
+\paragraph{Parser- and FST-based SPL reengineering}
+ExtractorPL abstracts variants into feature structure trees (FSTs) and synthesizes an SPL implementation capable of regenerating the originals~\cite{ziadi2014extractorpl}. Although the core representation is language-independent, the approach depends on programming-language specific parsers and pretty printers to translate between code and FSTs. FeatureHouse generalizes FST-based, superimposition-style composition across multiple implementation languages~\cite{apel2013featurehouse}; each supported language again requires a dedicated frontend. Our work shares the goal of programming-language independent reasoning but deliberately avoids parsers, abstract syntax trees (ASTs), and pretty printers by operating on tokenized text only.
 
-- Variability mining / feature location
-  - Variability Mining (Kästner et al), LEADT: AST + type system + topology + text 
-  - Wille, VarMine, etc: combine structural and text-based techniques, sometimes domain-specific 
-[3]: https://www.sciencedirect.com/science/article/pii/S0167642318301382 "Improving custom-tailored variability mining using outlier "
+% TODO: Decide whether I want to add a concrete citation for annotation-based extraction
+% (e.g., a CIDE paper) For now keep the reference to variability-aware parsing and partial preprocessing
+\paragraph{Preprocessor- and annotation-based extraction}
+Annotation-centric approaches and variability-aware frontends assume explicit feature annotations or disciplined conditional compilation. Variability-aware parsing (TypeChef) builds a unified variational AST for all \texttt{\#ifdef} configurations~\cite{kastner2011variabilityaware}, while partial preprocessing produces conditional token streams suitable for subsequent analyses~\cite{kastner2011partial}. These techniques provide strong guarantees for annotated code bases but tie the pipeline to specific languages and preprocessing ecosystems. In contrast, we neither rely on annotations nor conditional compilation and remain parser-free.
 
-- Clone-based and text-based analyses
-  - Token-based clone detectors (CCFinder, SourcererCC) widely used; sometimes integrated into SPL migration
-[4]: https://www.uni-bremen.de/fileadmin/user_upload/fachbereiche/fb3/softtech/Abschlussarbeiten/Diplomarbeiten/Inkrementelle_Klonerkennung.pdf "Incremental Clone Detection"
+% NOTE: Make sure the variability-mining references actually cover the described aspects:
+% semiautomatic feature detection, industrial mining with outliers/clusters, and extractive SPL modeling
+\paragraph{Variability mining and feature location}
+Variability mining combines structural and textual signals to detect features and their implementations. K{\"a}stner et al.\ present a semiautomatic process that integrates multiple sources of evidence to consistently detect product-line features~\cite{kaestner2014variabilitymining}. Outlier- and cluster-based analysis has been shown to improve mining quality in industrial settings~\cite{wille2018variabilitymining}. Linsbauer et al.\ address variability extraction and modeling for product variants, with a focus on building explicit variability models and reusable artefacts from existing portfolios~\cite{linsbauer2017variability}. Bottom-up frameworks such as BUT4Reuse provide an extensible process and intermediate representations into which concrete mining and model-synthesis techniques can be plugged~\cite{martinez2015but4reuse}. Model-based delta module generation leverages mined relations to construct deltas and regenerate variants~\cite{wille2017delta}. Our method operates at a lower abstraction level: we compute programming-language independent, token-based block correspondences across artefacts that can serve as a similarity backbone within such frameworks.
 
-AST/Parser-Based Methods:
-	- TypeChef — variability-aware C parser building a unified (variational) AST for all #ifdef variants — 2011 — Christian Kästner et al.: Variability-Aware Parsing in the Presence of Lexical Macros and Conditional Compilation
-	- Variability-aware Lexer (Partial Preprocessor) — reads unpreprocessed code with #ifdef, resolves macros/file-includes, emits a conditional token stream for AST construction — 2011 — Christian Kästner et al.: Partial Preprocessing C Code for Variability Analysis
+% NOTE: If space allows, I could add one sentence here that explicitly contrasts the goal
+% (generative representation and regeneration) with clone reporting
+\paragraph{Clone-based and text-based analyses}
+Token- and text-based clone detectors have been studied in SPL settings to understand and refactor feature implementations. Schulze et al.\ analyse code clones in feature-oriented SPLs to investigate their impact on maintenance and evolution~\cite{schulze2010codeclones}. We adopt a related low-level perspective (tokenization and alignment) but target an explicit, generative SPL representation that supports regeneration of variants, rather than clone reporting alone.
 
-Preprocessor-Based Methods:
-	- CIDE+ (Color-Coded IDE) — semi-automated annotation and extraction of optional feature code fragments using color-coded #ifdef blocks in IDE — 2011 — Christian Kästner et al.: CIDE+: A Semi-Automatic Approach for Product Line Extraction
+% TODO: Ensure that the FCA reference is indeed framed in an SPL or variability context
+\paragraph{Formal concept analysis and data mining}
+Formal Concept Analysis (FCA) has been proposed as a structural framework for representing commonality and variability by building lattices over artefact presence and configuration relations, which can inform feature grouping and model synthesis~\cite{galasso2025fca}. Our current pipeline stops at block presence across variants; FCA-style structuring is a complementary step on top of our extracted relations and is left as future work.
 
-FST-Based Methods:
-	- FeatureHouse — language-independent composition using Feature Structure Trees (FSTs) to superimpose artifacts across languages — 2013 — Sven Apel, Christian Kästner, Christian Lengauer: Language-Independent and Automated Software Composition: The FEATUREHOUSE Experience
+\paragraph{Software transplantation and slice-based reengineering}
+Software transplantation transfers feature ``organs'' between systems via slicing and search~\cite{barr2015autotransplant}. Building on this idea, recent work explores SPL engineering via transplantation, extracting feature slices and integrating them into a base product line~\cite{souza2025foundry}. These methods typically rely on language-specific analyses and focus on moving features across systems. We instead mine a coherent representation from a set of closely related clone-and-own variants and regenerate those variants from the mined representation.
 
-Formal Concept Analysis / Data Mining:
-	- Formal Concept Analysis (FCA) — derives feature commonalities and variability by building a concept lattice over configurations — 2025 — Jessie Galasso: Formal Concept Analysis: a Structural Framework for Variability Extraction and Analysis
-
-Clone Detection / Similarity-Based Methods:
-	- CCFinder2 — detects duplicated code fragments in feature-oriented SPLs to identify common and feature-specific clones — 2010 — Sandro Schulze et al.: Code Clones in Feature-Oriented Software Product Lines
-
-Software Transplantation / Program Slicing:
-	- µTrans / Scalpel — automated transplantation of a feature’s code (organ) from one system to another using program slicing and genetic search — 2015 — Earl Barr et al.: Automated Software Transplantation
-	- FOUNDRY / ProdScalpel — automated SPL reengineering via transplantation extracting feature code slices (over-organs) and integrating them into a base system — 2023 — Leandro O. Souza et al.: Software Product Line Engineering via Software Transplantation
-
-Tool-Assisted / Semi-Automated Workflows:
-	- BUT4Reuse — bottom-up framework using FCA and mining to identify commonalities, variability, and synthesize feature models semi-automatically — 2016 — Fegelein et al.: Bottom-Up Technologies for Reuse (BUT4Reuse)
-	- ExtractorPL — extractive SPL reverse engineering from variants using FSTs and grouping of construction primitives into features enabling regeneration of original products — 2014 — Tewfik Ziadi et al.: ExtractorPL: Language-Independent Extractive Software Product Line Engineering
-	- Wille et al. — model-based delta module generation from clone-and-own code variants enabling automated regeneration — 2017 — Dominik Wille et al.: Extractive Software Product Line Engineering using Model-Based Delta Module Generation
+% TODO: Keep this positioning paragraph tightly coupled to the contributions list in the introduction.
+\paragraph{Positioning}
+Taken together, prior work demonstrates effective SPL extraction via parser-dependent analyses (ExtractorPL, FeatureHouse, TypeChef), framework-based variability mining (BUT4Reuse, FCA, variability extraction), clone analysis, and transplantation. Our contribution is a deliberately lightweight alternative: a parser-free, token-based pipeline that treats heterogeneous textual artefacts uniformly and yields a generative representation capable of regenerating the original variants, which makes it suited to polyglot, DSL-rich portfolios where programming-language specific frontends are impractical or unavailable.
