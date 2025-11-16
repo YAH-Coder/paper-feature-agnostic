@@ -8,9 +8,9 @@ a \emph{set of software-intensive systems that share a common, managed
 set of features for a particular market segment or mission and that are
 developed from a common set of core assets in a prescribed way}, as
 formulated by Clements and Northrop in their seminal work on SPL
-engineering~\cite{clements2001software}. This view has been reiterated
+engineering~\citep{clements2001software}. This view has been reiterated
 and refined in subsequent overviews of SPL practice and
-research~\cite{pohl2018software}. The emphasis on a managed portfolio of
+research~\citep{pohl2018software}. The emphasis on a managed portfolio of
 systems and on systematic reuse of core assets distinguishes SPL
 engineering from ad hoc reuse strategies.
 
@@ -19,7 +19,7 @@ relevant to some stakeholder and is used to capture commonalities or to
 discriminate among systems in a family. This notion of features as
 stakeholder-relevant units of functionality or quality attributes is
 well established in the generative programming and SPL
-literature~\cite{czarnecki2000generative,czarnecki2005formalizing}. It
+literature~\citep{czarnecki2000generative,czarnecki2005formalizing}. It
 provides a unifying abstraction across heterogeneous artifacts and
 implementation techniques: a single feature may have manifestations in
 source code, configuration files, build scripts, or domain-specific
@@ -27,7 +27,7 @@ languages.
 
 A \emph{variant} (or product) is one concrete member of the SPL, i.e.,
 one program that realizes a particular combination of
-features~\cite{thum2011abstract,linsbauer2017variability}. From this
+features~\citep{thum2011abstract,linsbauer2017variability}. From this
 perspective, an SPL can be understood as a set of related program
 variants, together with a feature space and a (possibly partial) mapping
 from feature selections to variants. Variability extraction and
@@ -42,7 +42,7 @@ variants are created by copying (cloning) an existing system and then
 modifying the copy to satisfy the requirements of a particular customer
 or use case. Linsbauer et al.\ provide a precise characterization of
 this practice in the context of variability extraction and modeling for
-product variants~\cite{linsbauer2017variability}. While clone-and-own
+product variants~\citep{linsbauer2017variability}. While clone-and-own
 offers an attractive, low-barrier reuse mechanism, it lacks the
 disciplined variability management and systematic reuse of SPL
 engineering.
@@ -52,10 +52,10 @@ evolution have been documented in several empirical and industrial
 reports. For example, Kuiter et al.\ describe the migration of a
 temperature monitoring system from clone-and-own development to an SPL
 and report on the maintenance burdens associated with the original
-clone-and-own portfolio~\cite{kuiter2018getting}. Fischer et al.\ propose
+clone-and-own portfolio~\citep{kuiter2018getting}. Fischer et al.\ propose
 tool support to enhance clone-and-own with more systematic reuse, again
 motivated by the challenges of managing diverging clones over
-time~\cite{fischer2014enhancing}. Commonly cited problems include
+time~\citep{fischer2014enhancing}. Commonly cited problems include
 redundant bug fixing across multiple forks, inconsistent propagation of
 changes, and the absence of an explicit variability model.
 

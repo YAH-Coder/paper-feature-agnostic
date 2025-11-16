@@ -1,5 +1,17 @@
 \documentclass[12pt, letterpaper]{article}
 \usepackage{graphicx}
+
+\usepackage[
+  backend=biber,
+  style=authoryear,
+  sorting=nyt,
+  maxcitenames=2,
+  mincitenames=1,
+  natbib=true 
+]{biblatex}
+
+\addbibresource{references.bib}
+
 \title{Feature agnostic feature isolation}
 \author{Yannis Hübenthal}
 \date{\today}
@@ -18,7 +30,6 @@
 % \include{chapter/conclusion}
 % \include{chapter/future_work}
 
-\bibliographystyle{plain}
-\bibliography{references}
+\printbibliography
 
 \end{document}
