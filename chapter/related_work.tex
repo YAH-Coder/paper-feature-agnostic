@@ -2,6 +2,7 @@
 %TODO: should double-check that each cited reference really matches the described technique
 %
 \section{Related Work}
+\label{sec:related}
 Research on extractive software product lines (SPLs) and variant management spans parser- and model-based reengineering, variability mining, clone-based analyses, and software transplantation. We group the most relevant strands and position our contribution accordingly.
 
 % NOTE: Verify that the summary of ExtractorPL and FeatureHouse matches the original papers.
@@ -9,7 +10,7 @@ Research on extractive software product lines (SPLs) and variant management span
 ExtractorPL abstracts variants into feature structure trees (FSTs) and synthesizes an SPL implementation capable of regenerating the originals~\citep{ziadi2014extractorpl}. Although the core representation is language-independent, the approach depends on programming-language specific parsers and pretty printers to translate between code and FSTs. FeatureHouse generalizes FST-based, superimposition-style composition across multiple implementation languages~\citep{apel2013featurehouse}; each supported language again requires a dedicated frontend. Our work shares the goal of programming-language independent reasoning but deliberately avoids parsers, abstract syntax trees (ASTs), and pretty printers by operating on tokenized text only.
 
 % TODO: Decide whether I want to add a concrete citation for annotation-based extraction
-% (e.g., a CIDE paper) For now keep the reference to variability-aware parsing and partial preprocessing
+% (e.g., a CIDE paper)
 \paragraph{Preprocessor- and annotation-based extraction}
 Annotation-centric approaches and variability-aware frontends assume explicit feature annotations or disciplined conditional compilation. Variability-aware parsing (TypeChef) builds a unified variational AST for all \texttt{\#ifdef} configurations~\citep{kastner2011variabilityaware}, while partial preprocessing produces conditional token streams suitable for subsequent analyses~\citep{kastner2011partial}. These techniques provide strong guarantees for annotated code bases but tie the pipeline to specific languages and preprocessing ecosystems. In contrast, we neither rely on annotations nor conditional compilation and remain parser-free.
 
